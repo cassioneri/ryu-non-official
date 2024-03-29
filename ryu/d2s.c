@@ -451,6 +451,47 @@ static inline bool d2d_small_int(const uint64_t ieeeMantissa, const uint32_t iee
   return true;
 }
 
+typedef struct {
+  int32_t  exponent;
+  uint64_t mantissa;
+} teju64_fields_t;
+
+// Note (CN): A simpler version of d2s_buffered_n for the sake of comparison
+// against other algorithms. Returns the decimal representation of f by decoding
+// its IEEE-754 representation and calling d2d. f is assumed to be finite and
+// strictly positive.
+teju64_fields_t ryu_double_to_decimal(double f) {
+
+  // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
+  const uint64_t bits = double_to_bits(f);
+
+  // Decode bits into mantissa and exponent.
+  const uint64_t ieeeMantissa = bits & ((1ull << DOUBLE_MANTISSA_BITS) - 1);
+  const uint32_t ieeeExponent = (uint32_t) ((bits >> DOUBLE_MANTISSA_BITS) & ((1u << DOUBLE_EXPONENT_BITS) - 1));
+
+  floating_decimal_64 v;
+  const bool isSmallInt = d2d_small_int(ieeeMantissa, ieeeExponent, &v);
+  if (isSmallInt) {
+    // For small integers in the range [1, 2^53), v.mantissa might contain trailing (decimal) zeros.
+    // For scientific notation we need to move these zeros into the exponent.
+    // (This is not needed for fixed-point notation, so it might be beneficial to trim
+    // trailing zeros in to_chars only if needed - once fixed-point notation output is implemented.)
+    for (;;) {
+      const uint64_t q = div10(v.mantissa);
+      const uint32_t r = ((uint32_t) v.mantissa) - 10 * ((uint32_t) q);
+      if (r != 0) {
+        break;
+      }
+      v.mantissa = q;
+      ++v.exponent;
+    }
+  } else {
+    v = d2d(ieeeMantissa, ieeeExponent);
+  }
+  const teju64_fields_t fields = {v.exponent, v.mantissa};
+  return fields;
+}
+
 int d2s_buffered_n(double f, char* result) {
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
   const uint64_t bits = double_to_bits(f);

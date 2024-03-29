@@ -305,6 +305,29 @@ static inline int to_chars(const floating_decimal_32 v, const bool sign, char* c
   return index;
 }
 
+typedef struct {
+  int32_t  exponent;
+  uint32_t mantissa;
+} teju32_fields_t;
+
+// Note (CN): A simpler version of f2s_buffered_n for the sake of comparison
+// against other algorithms. Returns the decimal representation of f by decoding
+// its IEEE-754 representation and calling f2d. f is assumed to be finite and
+// strictly positive.
+teju32_fields_t ryu_float_to_decimal(float f) {
+
+  // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
+  const uint32_t bits = float_to_bits(f);
+
+  // Decode bits into mantissa and exponent.
+  const uint32_t ieeeMantissa = bits & ((1u << FLOAT_MANTISSA_BITS) - 1);
+  const uint32_t ieeeExponent = (bits >> FLOAT_MANTISSA_BITS) & ((1u << FLOAT_EXPONENT_BITS) - 1);
+
+  const floating_decimal_32 v = f2d(ieeeMantissa, ieeeExponent);
+  const teju32_fields_t fields = {v.exponent, v.mantissa};
+  return fields;
+}
+
 int f2s_buffered_n(float f, char* result) {
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
   const uint32_t bits = float_to_bits(f);
