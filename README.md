@@ -1,3 +1,8 @@
+# Warning
+
+This is not the official [Ryu repository](https://github.com/ulfjack/ryu).
+This fork was created for comparison of Ryu against alternative algorithms.
+
 # Ryu & Ryu Printf [![Build Status](https://travis-ci.org/ulfjack/ryu.svg?branch=master)](https://travis-ci.org/ulfjack/ryu)
 
 This project contains routines to convert IEEE-754 floating-point numbers to
