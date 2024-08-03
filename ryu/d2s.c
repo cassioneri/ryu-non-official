@@ -488,7 +488,7 @@ teju64_fields_t ryu_double_to_decimal(double f) {
   } else {
     v = d2d(ieeeMantissa, ieeeExponent);
   }
-  const teju64_fields_t fields = {v.exponent, v.mantissa};
+  const teju64_fields_t fields = {v.mantissa, v.exponent};
   return fields;
 }
 

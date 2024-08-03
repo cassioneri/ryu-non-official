@@ -324,7 +324,7 @@ teju32_fields_t ryu_float_to_decimal(float f) {
   const uint32_t ieeeExponent = (bits >> FLOAT_MANTISSA_BITS) & ((1u << FLOAT_EXPONENT_BITS) - 1);
 
   const floating_decimal_32 v = f2d(ieeeMantissa, ieeeExponent);
-  const teju32_fields_t fields = {v.exponent, v.mantissa};
+  const teju32_fields_t fields = {v.mantissa, v.exponent};
   return fields;
 }
 
