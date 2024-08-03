@@ -452,8 +452,8 @@ static inline bool d2d_small_int(const uint64_t ieeeMantissa, const uint32_t iee
 }
 
 typedef struct {
-  int32_t  exponent;
   uint64_t mantissa;
+  int32_t  exponent;
 } teju64_fields_t;
 
 // Note (CN): A simpler version of d2s_buffered_n for the sake of comparison

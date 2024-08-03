@@ -306,8 +306,8 @@ static inline int to_chars(const floating_decimal_32 v, const bool sign, char* c
 }
 
 typedef struct {
-  int32_t  exponent;
   uint32_t mantissa;
+  int32_t  exponent;
 } teju32_fields_t;
 
 // Note (CN): A simpler version of f2s_buffered_n for the sake of comparison
