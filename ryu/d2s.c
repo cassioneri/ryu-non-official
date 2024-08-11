@@ -451,16 +451,11 @@ static inline bool d2d_small_int(const uint64_t ieeeMantissa, const uint32_t iee
   return true;
 }
 
-typedef struct {
-  uint64_t mantissa;
-  int32_t  exponent;
-} teju64_fields_t;
-
 // Note (CN): A simpler version of d2s_buffered_n for the sake of comparison
 // against other algorithms. Returns the decimal representation of f by decoding
 // its IEEE-754 representation and calling d2d. f is assumed to be finite and
 // strictly positive.
-teju64_fields_t ryu_double_to_decimal(double f) {
+floating_decimal_64 ryu_double_to_decimal(double f) {
 
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
   const uint64_t bits = double_to_bits(f);
@@ -488,8 +483,7 @@ teju64_fields_t ryu_double_to_decimal(double f) {
   } else {
     v = d2d(ieeeMantissa, ieeeExponent);
   }
-  const teju64_fields_t fields = {v.mantissa, v.exponent};
-  return fields;
+  return v;
 }
 
 int d2s_buffered_n(double f, char* result) {
